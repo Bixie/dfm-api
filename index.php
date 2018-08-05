@@ -10,7 +10,7 @@ $api = new DfmApi($config['dfm_api'], $app['debug']);
 
 $app->helpers['apikey'] = 'Bixie\DfmApi\Helpers\ApiKeyHelper';
 $app->helpers['requestparams'] = 'Bixie\DfmApi\Helpers\RequestParamsHelper';
-$app->helpers['previewimage'] = 'Bixie\DfmApi\Helpers\PreviewImageHelper';
+$app->helpers['previewzip'] = 'Bixie\DfmApi\Helpers\PreviewZipHelper';
 
 $app->bind('/', function() {
     return 'API client/server for DFM preview requests';
@@ -52,35 +52,38 @@ $app->post('/generate', function() use ($api) {
 $app->get('/preview/:preview_id', function($params) {
     //todo check csrf somehow
     if (empty($params['preview_id'])) {
-        return ['status' => 400, 'error' => 'No image data!',];
+        return ['status' => 400, 'error' => 'No preview id!',];
     }
     $preview_id = (string)$params['preview_id'];
-    $contents = $this('previewimage')->getTempImageContents($preview_id);
-    if ($contents === false) {
+    $images = $this('previewzip')->getPreviewImagesContents($preview_id);
+    if ($images === false) {
         return ['status' => 'pending', 'preview_id' => $preview_id,];
     }
-    $this('previewimage')->removeTempImage($preview_id);
-    return ['preview_id' => $preview_id, 'status' => 'received', 'contents' => $contents,];
+//    $this('previewzip')->removeTempZip($preview_id);
+    return ['preview_id' => $preview_id, 'status' => 'received', 'images' => $images,];
 });
 
 /**
  * Post the generated image to the server
  */
 $app->post('/preview/:preview_id', function($params) {
-    if (empty($_REQUEST['imageData'])) {
-        return ['status' => 400, 'error' => 'No image data!',];
+    if (empty($_REQUEST['zipData'])) {
+        return ['status' => 400, 'error' => 'No zip data!',];
     }
     if (!$this('apikey')->test()) {
         return ['status' => 401, 'error' => 'Invalid API key',];
     }
     $preview_id = (string)$params['preview_id'];
-    $imageData = (string)$_REQUEST['imageData'];
-    if (!$this('previewimage')->saveTempImage($preview_id, $imageData)) {
-        return ['status' => 500, 'error' => 'Error writing temp-file',];
+    $zipData = (string)$_REQUEST['zipData'];
+    if (!$this('previewzip')->saveZipResponse($preview_id, $zipData)) {
+        return ['status' => 500, 'error' => 'Error writing temp-zipfile',];
     }
     return ['preview_id' => $preview_id,];
 });
 
+/**
+ * Error Handling
+ */
 $app->on('after', function() {
 
     switch($this->response->status){
