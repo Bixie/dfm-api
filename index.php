@@ -9,6 +9,7 @@ $app = new Lime\App(array_merge($config['lime'], $config['dfm_api']));
 $api = new DfmApi($config['dfm_api'], $app['debug']);
 
 $app->helpers['apikey'] = 'Bixie\DfmApi\Helpers\ApiKeyHelper';
+$app->helpers['requestparams'] = 'Bixie\DfmApi\Helpers\RequestParamsHelper';
 $app->helpers['previewimage'] = 'Bixie\DfmApi\Helpers\PreviewImageHelper';
 
 $app->bind('/', function() {
@@ -31,9 +32,8 @@ $app->bind('/', function() {
 $app->post('/generate', function() use ($api) {
     //todo check csrf somehow
     $preview_id = uniqid('dfm_preview');
-    //todo sanatize input
-    $params = $_REQUEST['params'];
-    $options = $_REQUEST['options'];
+    $params = $this('requestparams')->getData('params');
+    $options = $this('requestparams')->getData('options');
     $response = $api->post('/preview/' . $preview_id, compact('params', 'options'));
     if ($responseData = $response->getData()) {
         if ($responseData['result'] == true) {
