@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Bixie\DfmApi;
+namespace Bixie\DfmApi\Helpers;
 
 
 use Lime\Helper;

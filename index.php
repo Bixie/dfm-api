@@ -8,7 +8,8 @@ use Bixie\DfmApi\DfmApi;
 $app = new Lime\App(array_merge($config['lime'], $config['dfm_api']));
 $api = new DfmApi($config['dfm_api'], $app['debug']);
 
-$app->helpers['apikey'] = 'Bixie\DfmApi\ApiKeyHelper';
+$app->helpers['apikey'] = 'Bixie\DfmApi\Helpers\ApiKeyHelper';
+$app->helpers['previewimage'] = 'Bixie\DfmApi\Helpers\PreviewImageHelper';
 
 $app->bind('/', function() {
     return 'API client/server for DFM preview requests';
@@ -21,8 +22,12 @@ $app->post('/preview/:preview_id', function($params) {
     if (!$this('apikey')->test()) {
         return ['status' => 401, 'message' => 'Invalid API key',];
     }
+    $preview_id = (string)$params['preview_id'];
     $imageData = (string)$_REQUEST['imageData'];
-    return ['preview_id' => $params['preview_id']];
+    if (!$this('previewimage')->saveTempImage($preview_id, $imageData)) {
+        return ['status' => 500, 'message' => 'Error writing temp-file',];
+    }
+    return ['preview_id' => $preview_id];
 });
 
 $app->on('after', function() {

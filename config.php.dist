@@ -6,8 +6,9 @@ return [
     ],
     'lime' => [
         'debug' => true,
+        'path.root' => __DIR__,
         'app.name' => 'DFM API Server',
         'sec-key' => 'lkfz48$w%8FiW44w(^#FKsdg#UWFoaf8F(W$',
-        'temppath.previewimages' => '..\image-web',
+        'temppath.previewimages' => '../image-web',
     ],
 ];
