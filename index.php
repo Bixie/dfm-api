@@ -90,7 +90,7 @@ $app->on('after', function() {
 
     switch($this->response->status){
         case '404':
-            $this->response->body = ['error' => 'endpoint not found'];
+            $this->response->body = ['error' => 'Endpoint not found'];
             break;
         case '500':
             $this->response->body = ['error' => $this->response->body];
