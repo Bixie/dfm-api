@@ -8,6 +8,8 @@ return [
         'debug' => true,
         'path.root' => __DIR__,
         'app.name' => 'DFM API Server',
+//        'session.name' => 'dfmapisession',
+//        'session.cookie_domain' => '.dmf.nl',
         'sec-key' => 'lkfz48$w%8FiW44w(^#FKsdg#UWFoaf8F(W$',
         'temppath.previewimages' => '../image-web',
     ],

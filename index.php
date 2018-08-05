@@ -15,6 +15,14 @@ $app->bind('/', function() {
     return 'API client/server for DFM preview requests';
 });
 
+//session_set_cookie_params(36000, '/', $app['session.cookie_domain']);
+//$app('session')->init();
+//
+//$csrf = $app('session')->read('dfm.csrf');
+//if (!$csrf) {
+//    $app('session')->write('dfm.csrf', 'sdfghkhjklhh;h;;;hsdfsgshhs');
+//}
+
 $app->post('/preview/:preview_id', function($params) {
     if (empty($_REQUEST['imageData'])) {
         return ['status' => 400, 'message' => 'No image data!',];
