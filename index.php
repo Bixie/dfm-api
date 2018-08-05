@@ -23,33 +23,76 @@ $app->bind('/', function() {
 //    $app('session')->write('dfm.csrf', 'sdfghkhjklhh;h;;;hsdfsgshhs');
 //}
 
+/**
+ * Request preview image from dfm server
+ * @param array $params Parameters for DFM
+ * @param array $options Render options
+ */
+$app->post('/generate', function() use ($api) {
+    //todo check csrf somehow
+    $preview_id = uniqid('dfm_preview');
+    //todo sanatize input
+    $params = $_REQUEST['params'];
+    $options = $_REQUEST['options'];
+    $response = $api->post('/preview/' . $preview_id, compact('params', 'options'));
+    if ($responseData = $response->getData()) {
+        if ($responseData['result'] == true) {
+            return ['preview_id' => $preview_id, 'result' => true,];
+        } else {
+            return ['preview_id' => $preview_id, 'result' => false, 'error' => $responseData['error']];
+        }
+    } else {
+        return ['status' => 500, 'error' => $response->getError(),];
+    }
+});
+
+/**
+ * Request the preview image from server if available
+ */
+$app->get('/preview/:preview_id', function($params) {
+    //todo check csrf somehow
+    if (empty($params['preview_id'])) {
+        return ['status' => 400, 'error' => 'No image data!',];
+    }
+    $preview_id = (string)$params['preview_id'];
+    $contents = $this('previewimage')->getTempImageContents($preview_id);
+    if ($contents === false) {
+        return ['status' => 'pending', 'preview_id' => $preview_id,];
+    }
+    $this('previewimage')->removeTempImage($preview_id);
+    return ['preview_id' => $preview_id, 'status' => 'received', 'contents' => $contents,];
+});
+
+/**
+ * Post the generated image to the server
+ */
 $app->post('/preview/:preview_id', function($params) {
     if (empty($_REQUEST['imageData'])) {
-        return ['status' => 400, 'message' => 'No image data!',];
+        return ['status' => 400, 'error' => 'No image data!',];
     }
     if (!$this('apikey')->test()) {
-        return ['status' => 401, 'message' => 'Invalid API key',];
+        return ['status' => 401, 'error' => 'Invalid API key',];
     }
     $preview_id = (string)$params['preview_id'];
     $imageData = (string)$_REQUEST['imageData'];
     if (!$this('previewimage')->saveTempImage($preview_id, $imageData)) {
-        return ['status' => 500, 'message' => 'Error writing temp-file',];
+        return ['status' => 500, 'error' => 'Error writing temp-file',];
     }
-    return ['preview_id' => $preview_id];
+    return ['preview_id' => $preview_id,];
 });
 
 $app->on('after', function() {
 
     switch($this->response->status){
         case '404':
-            $this->response->body = ['message' => 'endpoint not found'];
+            $this->response->body = ['error' => 'endpoint not found'];
             break;
         case '500':
-            $this->response->body = ['message' => $this->response->body];
+            $this->response->body = ['error' => $this->response->body];
             break;
     }
 
-    if (!empty($this->response->body['status']) && !empty($this->response->body['message'])) {
+    if (!empty($this->response->body['status']) && !empty($this->response->body['error'])) {
         $this->response->status = $this->response->body['status'];
         unset($this->response->body['status']);
     }
@@ -57,14 +100,3 @@ $app->on('after', function() {
 
 $app->run();
 
-//
-//$response = $client->get('/api/shipment', compact('filter'));
-//
-//if ($responseData = $response->getData()) {
-//	echo '<pre>';
-//	echo print_r($responseData);
-//	echo '</pre>';
-//
-//} else {
-//	echo $response->getError();
-//}

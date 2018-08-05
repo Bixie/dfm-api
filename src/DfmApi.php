@@ -7,6 +7,7 @@ use Bixie\DfmApi\Request\RequestParameters;
 use Bixie\DfmApi\Request\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
@@ -85,19 +86,19 @@ class DfmApi {
 		return $this->send('DELETE', $url, $data, $query, $headers);
 	}
 
-	/**
-	 * @param string $method
-	 * @param string $url
-	 * @param array  $data
-	 * @param array $query
-	 * @param array  $headers
-	 * @return Response Response from the service.
-	 */
+    /**
+     * @param string $method
+     * @param string $url
+     * @param array  $data
+     * @param array  $query
+     * @param array  $headers
+     * @return Response Response from the service.
+     */
 	public function send ($method, $url, $data = [], $query = [], $headers = []) {
 
 
 		try {
-			$response = $this->client->request($method, '', [
+			$response = $this->client->request($method, $url, [
 				'query' => $query,
 				'json' => $data,
 				'headers' => $this->getHeaders($data, $query, $headers)->all(),
@@ -113,6 +114,9 @@ class DfmApi {
 			}
 			return new Response(new GuzzleResponse(500, [], null, ['reason_phrase' => $e->getMessage()]));
 
+		} catch (GuzzleException $e) {
+
+			return new Response(new GuzzleResponse(500, [], null, ['reason_phrase' => $e->getMessage()]));
 		} catch (\Exception $e) {
 
 			return new Response(new GuzzleResponse(500, [], null, ['reason_phrase' => $e->getMessage()]));
@@ -127,19 +131,16 @@ class DfmApi {
 		if (!isset($this->cookieJar) && $this->debug) {
 			$this->cookieJar = CookieJar::fromArray([
 				'XDEBUG_SESSION' => 'PHPSTORM'
-			], (new Uri($this->config['api_url']))->getHost());
+			], (new Uri($this->config['dfm.api_url']))->getHost());
 		}
 		return $this->debug ? $this->cookieJar : false;
 	}
 
 	/**
-	 * @param RequestParameters $data
-	 * @param RequestParameters $query
 	 * @param array             $headers
 	 * @return RequestHeaders
 	 */
-	protected function getHeaders (RequestParameters $data, RequestParameters $query, $headers = []) {
-		$data->add($query->all());
+	protected function getHeaders ($headers = []) {
 		$headers['accept'] = 'application/json';
 		$headers[DfmApi::HEADER_KEY_APITOKEN] = $this->apiKey;
 		return new RequestHeaders($headers);
