@@ -24,12 +24,24 @@ class PreviewZipHelper extends Helper {
 
     /**
      * @param string $preview_id
-     * @param string $zipData
      * @return bool
      */
-    public function saveZipResponse($preview_id, $zipData) {
-        //todo this does not do the job
-        $size = file_put_contents($this->getZipFilepath($preview_id), base64_decode($zipData));
+    public function saveZipResponse($preview_id) {
+        $size = 0;
+        /* PUT data comes in on the stdin stream */
+        $putdata = fopen("php://input", "r");
+
+        /* Open a file for writing */
+        $fp = fopen($this->getZipFilepath($preview_id), 'w');
+
+        /* Read the data 1 KB at a time and write to the file */
+        while ($data = fread($putdata, 1024)) {
+            $size += fwrite($fp, $data);
+        }
+        /* Close the streams */
+        fclose($fp);
+        fclose($putdata);
+
         return $size > 0;
     }
 

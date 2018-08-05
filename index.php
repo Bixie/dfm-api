@@ -66,20 +66,22 @@ $app->get('/preview/:preview_id', function($params) {
 /**
  * Post the generated image to the server
  */
-$app->post('/preview/:preview_id', function($params) {
-    if (empty($_REQUEST['zipData'])) {
-        return ['status' => 400, 'error' => 'No zip data!',];
-    }
-    if (!$this('apikey')->test()) {
-        return ['status' => 401, 'error' => 'Invalid API key',];
-    }
-    $preview_id = (string)$params['preview_id'];
-    $zipData = (string)$_REQUEST['zipData'];
-    if (!$this('previewzip')->saveZipResponse($preview_id, $zipData)) {
-        return ['status' => 500, 'error' => 'Error writing temp-zipfile',];
-    }
-    return ['preview_id' => $preview_id,];
-});
+if ($app->req_is('put')) { //no shorthand function for put
+    $app->bind('/preview/:preview_id', function($params) {
+        if (!$this('apikey')->test()) {
+            return ['status' => 401, 'error' => 'Invalid API key',];
+        }
+        if (empty($params['preview_id'])) {
+            return ['status' => 400, 'error' => 'No preview id!',];
+        }
+        $preview_id = (string)$params['preview_id'];
+        if (!$this('previewzip')->saveZipResponse($preview_id)) {
+            return ['status' => 500, 'error' => 'Error writing temp-zipfile',];
+        }
+        return ['preview_id' => $preview_id,];
+    });
+}
+
 
 /**
  * Error Handling
