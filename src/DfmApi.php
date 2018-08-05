@@ -47,9 +47,9 @@ class DfmApi {
 	 */
 	public function __construct ($config, $debug = false) {
 		$this->config = $config;
-		$this->apiKey = $config['dfm_api_key'];
+		$this->apiKey = $config['dfm.api_key'];
 
-		$this->client = new Client(['base_uri' => $this->config['dfm_api_url']]);
+		$this->client = new Client(['base_uri' => $this->config['dfm.api_url']]);
 		$this->debug = $debug;
 	}
 

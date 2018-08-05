@@ -1,11 +1,14 @@
 <?php
 
+/** $var array $config */
 include 'main.php';
 
 use Bixie\DfmApi\DfmApi;
 
-$app = new Lime\App($config['lime']);
-$api = new DfmApi($config, $app['debug']);
+$app = new Lime\App(array_merge($config['lime'], $config['dfm_api']));
+$api = new DfmApi($config['dfm_api'], $app['debug']);
+
+$app->helpers['apikey'] = 'Bixie\DfmApi\ApiKeyHelper';
 
 $app->bind('/', function() {
     return 'API client/server for DFM preview requests';
@@ -14,6 +17,9 @@ $app->bind('/', function() {
 $app->post('/preview/:preview_id', function($params) {
     if (empty($_REQUEST['imageData'])) {
         return ['status' => 400, 'message' => 'No image data!',];
+    }
+    if (!$this('apikey')->test()) {
+        return ['status' => 401, 'message' => 'Invalid API key',];
     }
     $imageData = (string)$_REQUEST['imageData'];
     return ['preview_id' => $params['preview_id']];
