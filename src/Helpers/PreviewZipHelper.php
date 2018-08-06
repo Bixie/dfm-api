@@ -49,7 +49,7 @@ class PreviewZipHelper extends Helper {
      * @param string $preview_id
      * @return array|bool
      */
-    public function getPreviewImagesContents ($preview_id) {
+    public function getPreviewFilesContents ($preview_id) {
         $filepath = $this->getZipFilepath($preview_id);
         if (!file_exists($filepath)) {
             return false;

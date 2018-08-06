@@ -55,12 +55,12 @@ $app->get('/preview/:preview_id', function($params) {
         return ['status' => 400, 'error' => 'No preview id!',];
     }
     $preview_id = (string)$params['preview_id'];
-    $images = $this('previewzip')->getPreviewImagesContents($preview_id);
-    if ($images === false) {
+    $files = $this('previewzip')->getPreviewFilesContents($preview_id);
+    if ($files === false) {
         return ['status' => 'pending', 'preview_id' => $preview_id,];
     }
 //    $this('previewzip')->removeTempZip($preview_id);
-    return ['preview_id' => $preview_id, 'status' => 'received', 'images' => $images,];
+    return ['preview_id' => $preview_id, 'status' => 'received', 'files' => $files,];
 });
 
 /**
@@ -100,6 +100,9 @@ $app->on('after', function() {
     if (!empty($this->response->body['status']) && !empty($this->response->body['error'])) {
         $this->response->status = $this->response->body['status'];
         unset($this->response->body['status']);
+    }
+    if ($this['debug']) {
+        $this->response->headers[] = 'Access-Control-Allow-Origin: http://localhost:8080';
     }
 });
 
