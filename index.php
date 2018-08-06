@@ -29,7 +29,7 @@ $app->bind('/', function() {
  * @param array $params Parameters for DFM
  * @param array $options Render options
  */
-$app->post('/generate', function() use ($api) {
+$app->post('/request', function() use ($api) {
     //todo check csrf somehow
     $preview_id = uniqid('dfm_preview');
     $params = $this('requestparams')->getData('params');
