@@ -101,9 +101,6 @@ $app->on('after', function() {
         $this->response->status = $this->response->body['status'];
         unset($this->response->body['status']);
     }
-    if ($this['debug']) {
-        $this->response->headers[] = 'Access-Control-Allow-Origin: http://localhost:8080';
-    }
 });
 
 $app->run();
