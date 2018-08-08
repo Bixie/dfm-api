@@ -3,7 +3,6 @@
 namespace Bixie\DfmApi;
 
 use Bixie\DfmApi\Request\RequestHeaders;
-use Bixie\DfmApi\Request\RequestParameters;
 use Bixie\DfmApi\Request\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Cookie\CookieJar;
@@ -112,14 +111,14 @@ class DfmApi {
 			if ($e->hasResponse()) {
 				return new Response($e->getResponse());
 			}
-			return new Response(new GuzzleResponse(500, [], null, ['reason_phrase' => $e->getMessage()]));
+			return new Response(new GuzzleResponse(500, [], null, '1.1', $e->getMessage()));
 
 		} catch (GuzzleException $e) {
 
-			return new Response(new GuzzleResponse(500, [], null, ['reason_phrase' => $e->getMessage()]));
+			return new Response(new GuzzleResponse(500, [], null, '1.1', $e->getMessage()));
 		} catch (\Exception $e) {
 
-			return new Response(new GuzzleResponse(500, [], null, ['reason_phrase' => $e->getMessage()]));
+			return new Response(new GuzzleResponse(500, [], null, '1.1', $e->getMessage()));
 		}
 
 	}

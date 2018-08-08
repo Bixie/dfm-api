@@ -57,10 +57,10 @@ $app->get('/preview/:preview_id', function($params) {
     $preview_id = (string)$params['preview_id'];
     $files = $this('previewzip')->getPreviewFilesContents($preview_id);
     if ($files === false) {
-        return ['status' => 'pending', 'preview_id' => $preview_id,];
+        return ['preview_status' => 'pending', 'preview_id' => $preview_id,];
     }
 //    $this('previewzip')->removeTempZip($preview_id);
-    return ['preview_id' => $preview_id, 'status' => 'received', 'files' => $files,];
+    return ['preview_id' => $preview_id, 'preview_status' => 'received', 'files' => $files,];
 });
 
 /**
@@ -94,6 +94,7 @@ $app->on('after', function() {
             break;
         case '500':
             $this->response->body = ['error' => $this->response->body];
+            //todo log
             break;
     }
 
