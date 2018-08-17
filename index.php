@@ -16,14 +16,6 @@ $app->bind('/', function() {
     return 'API client/server for DFM preview requests';
 });
 
-//session_set_cookie_params(36000, '/', $app['session.cookie_domain']);
-//$app('session')->init();
-//
-//$csrf = $app('session')->read('dfm.csrf');
-//if (!$csrf) {
-//    $app('session')->write('dfm.csrf', 'sdfghkhjklhh;h;;;hsdfsgshhs');
-//}
-
 /**
  * Request preview image from dfm server
  * @param array $params Parameters for DFM
