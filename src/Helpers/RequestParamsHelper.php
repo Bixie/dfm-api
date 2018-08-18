@@ -30,8 +30,10 @@ class RequestParamsHelper extends Helper {
             'DataProvider' => FILTER_VALIDATE_INT,
         ],
         'options' => [
+            'timestamp' => FILTER_VALIDATE_INT,
             'width' => FILTER_VALIDATE_INT,
             'layout' => FILTER_SANITIZE_STRING,
+            'locale' => FILTER_SANITIZE_STRING,
         ],
     ];
 
