@@ -11,6 +11,8 @@ $api = new DfmApi($config['dfm_api'], $app['debug']);
 $app->helpers['apikey'] = 'Bixie\DfmApi\Helpers\ApiKeyHelper';
 $app->helpers['requestparams'] = 'Bixie\DfmApi\Helpers\RequestParamsHelper';
 $app->helpers['previewzip'] = 'Bixie\DfmApi\Helpers\PreviewZipHelper';
+//try get name from cookie
+//$app('session')->init($sessionname=null);
 
 $app->bind('/', function() {
     return 'API client/server for DFM preview requests';
