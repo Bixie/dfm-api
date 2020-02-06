@@ -11,6 +11,8 @@ $api = new DfmApi($config['dfm_api'], $app['debug']);
 $app->helpers['apikey'] = 'Bixie\DfmApi\Helpers\ApiKeyHelper';
 $app->helpers['requestparams'] = 'Bixie\DfmApi\Helpers\RequestParamsHelper';
 $app->helpers['previewzip'] = 'Bixie\DfmApi\Helpers\PreviewZipHelper';
+$app->helpers['drinput'] = 'Bixie\DfmApi\Helpers\DRInputHelper';
+$app->helpers['keygenerator'] = 'Bixie\DfmApi\Helpers\KeyGenerator';
 //try get name from cookie
 //$app('session')->init($sessionname=null);
 
@@ -76,6 +78,24 @@ if ($app->req_is('put')) { //no shorthand function for put
     });
 }
 
+/**
+ * Request license key for DFM, requested by DR
+ * https://account.mycommerce.com/home/wiki/Web%20Key%20Generators
+ * https://account.mycommerce.com/home/wiki/Input%20Values
+ */
+$app->post('/keygen', function() use ($api) {
+    $this->response->mime = 'asc'; //DR expects plain text
+    $data = $this('drinput')->getData();
+    try {
+        $key = $this('keygenerator')->generateKeyFromId($data['PURCHASE_ID']);
+        //not interested in response
+        $api->post('/license', compact('data', 'key'));
+        return $key;
+    } catch (Exception $e) {
+        $this->response->status = 500;
+        return $e->getMessage();
+    }
+});
 
 /**
  * Error Handling
@@ -92,7 +112,7 @@ $app->on('after', function() {
             break;
     }
 
-    if (!empty($this->response->body['status']) && !empty($this->response->body['error'])) {
+    if (is_array($this->response->body) && !empty($this->response->body['status']) && !empty($this->response->body['error'])) {
         $this->response->status = $this->response->body['status'];
         unset($this->response->body['status']);
     }
