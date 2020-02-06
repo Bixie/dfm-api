@@ -7,6 +7,7 @@ return [
     'lime' => [
         'debug' => true,
         'path.root' => __DIR__,
+        'path.logs' => '../logs',
         'app.name' => 'DFM API Server',
 //        'session.name' => 'dfmapisession',
 //        'session.cookie_domain' => '.dmf.nl',

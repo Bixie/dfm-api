@@ -13,6 +13,8 @@ $app->helpers['requestparams'] = 'Bixie\DfmApi\Helpers\RequestParamsHelper';
 $app->helpers['previewzip'] = 'Bixie\DfmApi\Helpers\PreviewZipHelper';
 $app->helpers['drinput'] = 'Bixie\DfmApi\Helpers\DRInputHelper';
 $app->helpers['keygenerator'] = 'Bixie\DfmApi\Helpers\KeyGenerator';
+$app->helpers['logger'] = 'Bixie\DfmApi\Helpers\Logger';
+
 //try get name from cookie
 //$app('session')->init($sessionname=null);
 
@@ -88,10 +90,16 @@ $app->post('/keygen', function() use ($api) {
     $data = $this('drinput')->getData();
     try {
         $key = $this('keygenerator')->generateKeyFromId($data['PURCHASE_ID']);
+        $this('logger')->info(
+            sprintf('License key for order %s, email %s: %s', $data['PURCHASE_ID'], $data['EMAIL'], $key)
+        );
         //not interested in response
         $api->post('/license', compact('data', 'key'));
         return $key;
     } catch (Exception $e) {
+        $this('logger')->error(
+            sprintf('Error creating license key for order %s, email %s', $data['PURCHASE_ID'] ?? '', $data['EMAIL'] ?? '')
+        );
         $this->response->status = 500;
         return $e->getMessage();
     }
