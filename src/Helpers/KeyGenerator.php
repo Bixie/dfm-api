@@ -9,7 +9,7 @@ use Lime\Helper;
 
 class KeyGenerator extends Helper
 {
-    const MIN_HASH_LENGTH = 12;
+    const MIN_HASH_LENGTH = 17;
 
     const ALPHABETH = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
@@ -26,6 +26,6 @@ class KeyGenerator extends Helper
             throw new \InvalidArgumentException('Id for key must not be empty!');
         }
         $hashid = $this->hashids->encode($id);
-        return implode('-', str_split($hashid . strtoupper(hash('crc32b', $hashid)), 4));
+        return implode('-', str_split($hashid . strtoupper(hash('crc32b', $hashid)), 5));
     }
 }
