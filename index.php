@@ -12,6 +12,7 @@ $app->helpers['apikey'] = 'Bixie\DfmApi\Helpers\ApiKeyHelper';
 $app->helpers['requestparams'] = 'Bixie\DfmApi\Helpers\RequestParamsHelper';
 $app->helpers['previewzip'] = 'Bixie\DfmApi\Helpers\PreviewZipHelper';
 $app->helpers['drinput'] = 'Bixie\DfmApi\Helpers\DRInputHelper';
+$app->helpers['keygenauth'] = 'Bixie\DfmApi\Helpers\KeygenAuthenticator';
 $app->helpers['keygenerator'] = 'Bixie\DfmApi\Helpers\KeyGenerator';
 $app->helpers['logger'] = 'Bixie\DfmApi\Helpers\Logger';
 
@@ -87,6 +88,10 @@ if ($app->req_is('put')) { //no shorthand function for put
  */
 $app->post('/keygen', function() use ($api) {
     $this->response->mime = 'asc'; //DR expects plain text
+    if (!$this('keygenauth')->authenticate()) {
+        $this->response->status = 401;
+        return 'Unauthenticated';
+    }
     $data = $this('drinput')->getData();
     try {
         $key = $this('keygenerator')->generateKeyFromId($data['PURCHASE_ID']);
