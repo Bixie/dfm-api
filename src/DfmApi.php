@@ -41,15 +41,15 @@ class DfmApi {
 	const HEADER_KEY_APITOKEN = 'x-dfm-apitoken';
 
 	/**
-	 * DevosClient constructor.
-	 * @param      $config
-	 * @param bool $debug
+	 * @param array $config
+	 * @param bool  $debug
 	 */
-	public function __construct ($config, $debug = false) {
+	public function __construct (array $config, $debug = false)
+    {
 		$this->config = $config;
-		$this->apiKey = $config['dfm.api_key'];
+		$this->apiKey = $config['api_key'];
 
-		$this->client = new Client(['base_uri' => $this->config['dfm.api_url']]);
+		$this->client = new Client(['base_uri' => $this->config['api_url']]);
 		$this->debug = $debug;
 	}
 
@@ -59,7 +59,8 @@ class DfmApi {
 	 * @param array $headers
 	 * @return Response Response from the service.
 	 */
-	public function get ($url, $query = [], $headers = []) {
+	public function get ($url, $query = [], $headers = []): Response
+    {
 		return $this->send('GET', $url, [], $query, $headers);
 	}
 
@@ -70,7 +71,8 @@ class DfmApi {
 	 * @param array $headers
 	 * @return Response Response from the service.
 	 */
-	public function post ($url, $data = [], $query = [], $headers = []) {
+	public function post ($url, $data = [], $query = [], $headers = []): Response
+    {
 		return $this->send('POST', $url, $data, $query, $headers);
 	}
 
@@ -81,7 +83,8 @@ class DfmApi {
 	 * @param array $headers
 	 * @return Response Response from the service.
 	 */
-	public function delete ($url, $data = [], $query = [], $headers = []) {
+	public function delete ($url, $data = [], $query = [], $headers = []): Response
+    {
 		return $this->send('DELETE', $url, $data, $query, $headers);
 	}
 
@@ -93,14 +96,13 @@ class DfmApi {
      * @param array  $headers
      * @return Response Response from the service.
      */
-	public function send ($method, $url, $data = [], $query = [], $headers = []) {
-
-
+	public function send ($method, $url, $data = [], $query = [], $headers = []): Response
+    {
 		try {
 			$response = $this->client->request($method, $url, [
 				'query' => $query,
 				'json' => $data,
-				'headers' => $this->getHeaders($data, $query, $headers)->all(),
+				'headers' => $this->getHeaders($headers)->all(),
 				'cookies' => $this->getCookies()
 			]);
 
@@ -126,11 +128,12 @@ class DfmApi {
 	/**
 	 * @return bool|CookieJar
 	 */
-	protected function getCookies () {
+	protected function getCookies ()
+    {
 		if (!isset($this->cookieJar) && $this->debug) {
 			$this->cookieJar = CookieJar::fromArray([
 				'XDEBUG_SESSION' => 'PHPSTORM'
-			], (new Uri($this->config['dfm.api_url']))->getHost());
+			], (new Uri($this->config['api_url']))->getHost());
 		}
 		return $this->debug ? $this->cookieJar : false;
 	}
@@ -139,7 +142,8 @@ class DfmApi {
 	 * @param array             $headers
 	 * @return RequestHeaders
 	 */
-	protected function getHeaders ($headers = []) {
+	protected function getHeaders ($headers = []): RequestHeaders
+    {
 		$headers['accept'] = 'application/json';
 		$headers[DfmApi::HEADER_KEY_APITOKEN] = $this->apiKey;
 		return new RequestHeaders($headers);

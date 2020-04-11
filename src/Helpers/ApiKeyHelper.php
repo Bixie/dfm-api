@@ -16,6 +16,6 @@ class ApiKeyHelper extends Helper {
      */
     public function test() {
         $api_key = isset($_SERVER[self::HEADER_KEY_APITOKEN]) ? $_SERVER[self::HEADER_KEY_APITOKEN] : '';
-        return $api_key === $this->app['dfm.api_key'];
+        return $api_key === $this->app['api_key'];
     }
 }

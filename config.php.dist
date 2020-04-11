@@ -1,8 +1,8 @@
 <?php
 return [
     'dfm_api' => [
-        'dfm.api_url' => 'http://localhost:3000',
-        'dfm.api_key' => 'secret',
+        'api_url' => 'http://localhost:3000',
+        'api_key' => 'secret',
         'keygen.user' => 'dr',
         'keygen.password' => 'secret',
     ],
