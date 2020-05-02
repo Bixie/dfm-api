@@ -56,7 +56,7 @@ class PreviewZip
             return false;
         }
         //unzip and base64 decode the images
-        $files = $this->readZipTobase64($filepath);
+        $files = $this->readZipToAscii($filepath);
         return $files;
     }
 
@@ -79,14 +79,16 @@ class PreviewZip
      * @param $filepath
      * @return array
      */
-    protected function readZipTobase64 ($filepath) {
+    protected function readZipToAscii ($filepath) {
         $files = [];
         $zip = new \ZipArchive;
         if ($zip->open($filepath) === true) {
             for ($i = 0; $i < $zip->numFiles; $i++) {
                 $name = $zip->getNameIndex($i);
                 $contents = $zip->getFromIndex($i);
-                $contents = base64_encode($contents);
+                if (preg_match('/\.(?:png|jpg|gif)$/', $name)) {
+                    $contents = base64_encode($contents);
+                }
                 $files[$name] = $contents;
             }
             $zip->close();
