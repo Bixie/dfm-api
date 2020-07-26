@@ -59,7 +59,7 @@ $app->get('/preview/:preview_id', function($params) {
         return ['status' => 400, 'error' => 'No preview id!',];
     }
     $preview_id = (string)$params['preview_id'];
-    $files = $this('previewzip')->getPreviewFilesContents($preview_id);
+    $files = $this('previewzip')->getPreviewFilesContents($preview_id, true);
     if ($files === false) {
         return ['preview_status' => 'pending', 'preview_id' => $preview_id,];
     }
