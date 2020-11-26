@@ -1,6 +1,6 @@
 # Disable magic quotes by default
 # php_value magic_quotes_gpc off
-
+SetEnvIf Authorization .+ HTTP_AUTHORIZATION=$0
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteCond %{REQUEST_FILENAME} !-f
