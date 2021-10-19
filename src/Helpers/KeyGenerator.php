@@ -7,6 +7,9 @@ namespace Bixie\DfmApi\Helpers;
 use Hashids\Hashids;
 use Lime\Helper;
 
+/**
+ * @deprecated
+ */
 class KeyGenerator extends Helper
 {
     const MIN_HASH_LENGTH = 17;
