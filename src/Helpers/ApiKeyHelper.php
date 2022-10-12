@@ -4,7 +4,7 @@
 namespace Bixie\DfmApi\Helpers;
 
 
-use Lime\Helper;
+use Bixie\DfmApi\Lime\Helper;
 
 class ApiKeyHelper extends Helper {
 
@@ -15,7 +15,7 @@ class ApiKeyHelper extends Helper {
      * @return bool
      */
     public function test() {
-        $api_key = isset($_SERVER[self::HEADER_KEY_APITOKEN]) ? $_SERVER[self::HEADER_KEY_APITOKEN] : '';
+        $api_key = $_SERVER[self::HEADER_KEY_APITOKEN] ?? '';
         return $api_key === $this->app['api_key'];
     }
 }

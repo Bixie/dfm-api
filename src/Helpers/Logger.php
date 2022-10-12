@@ -2,14 +2,15 @@
 
 namespace Bixie\DfmApi\Helpers;
 
-use Lime\Helper;
+use Bixie\DfmApi\Lime\Helper;
 use Monolog\Handler\RotatingFileHandler;
+use Monolog\Level;
 use Monolog\Logger as MonoLogger;
 use Monolog\Processor\WebProcessor;
 
 class Logger extends Helper {
 
-    protected $logger;
+    protected MonoLogger $logger;
 
     public function initialize ()
     {
@@ -17,7 +18,7 @@ class Logger extends Helper {
             ->setTimezone(new \DateTimeZone('Europe/Amsterdam'))
             ->pushHandler(
                 (new RotatingFileHandler(
-                $this->app['path.logs'] . '/dfm-api', 12, MonoLogger::INFO
+                $this->app['path.logs'] . '/dfm-api', 12, Level::Info
                  ))->setFilenameFormat('{filename}-{date}', RotatingFileHandler::FILE_PER_MONTH)
             )
             ->pushProcessor(new WebProcessor());

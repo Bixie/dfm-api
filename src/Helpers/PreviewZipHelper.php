@@ -5,11 +5,11 @@ namespace Bixie\DfmApi\Helpers;
 
 
 use Bixie\DfmApi\PreviewZip;
-use Lime\Helper;
+use Bixie\DfmApi\Lime\Helper;
 
 class PreviewZipHelper extends Helper {
 
-    protected $previewZip;
+    protected PreviewZip $previewZip;
 
     /**
      * @throws \Exception

@@ -11,14 +11,12 @@
     }
   ],
   "require": {
-    "php": "^7.2.1",
-    "guzzlehttp/guzzle": "~6.0",
-    "symfony/http-foundation": "^3.0",
-    "aheinze/lime": "^1.0",
+    "php": ">=8.0",
+    "guzzlehttp/guzzle": "~7.5",
+    "symfony/http-foundation": "^6.1",
     "ext-json": "*",
     "ext-zip": "*",
-    "hashids/hashids": "^4.0",
-    "monolog/monolog": "^2.0"
+    "monolog/monolog": "^3.2"
   },
   "autoload": {
     "psr-4": {

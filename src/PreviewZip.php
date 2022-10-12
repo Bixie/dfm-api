@@ -7,10 +7,7 @@ namespace Bixie\DfmApi;
 class PreviewZip
 {
 
-    /**
-     * @var string
-     */
-    protected $previewimagesPath;
+    protected string|bool $previewimagesPath;
 
     /**
      * @param string $previewimagesPath
